@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title> My Portfolio</title>
+</head>
+<body>
+
+<div id="loading">
+    loading...
+</div>
+
+<div class='main' id="mainContainer" hidden>
+<img id="profileImage">
+<h2 id ="fullName"> </h2>
+<p id="bio"></p>
+<i>Projects:<p id ="totalProjects" ></p></i>
+<p>
+    Check me on <a id="githublink">Github</a>
+</p>
+</div>
+
+<div class="col-md-8">
+    <b>My Projects</b>
+    <button onclick="buttonClickNext()" class="btn btn-secondary">Next</button>
+    <button onclick="buttonClickPrev()" class="btn btn-secondary">Prev
+    </button>
+    <i id="perPage"></i>
+    <div id="projectlist"></div>
+</div>
+<script>
+    var projectlistContainer = document.getElementById("projectlist");
+    fetch("https://api.github.com/users/Thakuriprince")
+    .then(response => response.json())
+    .then(function(data){
+        getProject()
+        console.log(data)
+        document.getElementById("profileImage").src = data['avatar_url']
+        document.getElementById("fullName").textContent = data['name']
+        document.getElementById("bio").textContent = data['bio']
+        document.getElementById("githublink").href = data['html_url']
+        document.getElementById("mainContainer").hidden = false
+        document.getElementById("loading").hidden = true
+        document.getElementById("totalProjects").textContent= data["public_repos"]
+      
+    })
+
+     function getProject(){
+        var projectlist=  " " ;
+        fetch("https://api.github.com/users/Thakuriprince/repos")
+        .then(response => response.json())
+        .then(function(data){
+            for (var i =0; i< data.length; i++) {
+                projectlist +=  '<a href=' + data[i].html_url +'>' + data[i].name + '</a>' ;
+
+            }
+            projectlistContainer.innerHTML = projectlist
+        })
+     }
+    
+    function buttonClickNext(){
+        ++pageNumber
+        getProject()
+    }
+    function buttonClickPrev(){
+        --pageNumber
+        getProject()
+    }
+</script>
+
+
+</body>
+</html>
